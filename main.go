@@ -18,6 +18,7 @@ var skipheader = flag.Int("h", 0, "Number of top rows to skip")
 type outputer func(s string)
 
 func generateCSVFromXLSXFile(excelFileName string, sheetIndex int, outputf outputer) error {
+	fmt.Println("this is the new version")
 	xlFile, error := xlsx.OpenFile(excelFileName)
 	if error != nil {
 		return error
