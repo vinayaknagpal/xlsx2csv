@@ -13,6 +13,7 @@ import (
 var xlsxPath = flag.String("f", "", "Path to an XLSX file")
 var sheetIndex = flag.Int("i", 0, "Index of sheet to convert, zero based")
 var delimiter = flag.String("d", ";", "Delimiter to use between fields")
+var skipheader = flag.Int("h", 0, "Number of top rows to skip")
 
 type outputer func(s string)
 
@@ -29,9 +30,9 @@ func generateCSVFromXLSXFile(excelFileName string, sheetIndex int, outputf outpu
 		return fmt.Errorf("No sheet %d available, please select a sheet between 0 and %d\n", sheetIndex, sheetLen-1)
 	}
 	sheet := xlFile.Sheets[sheetIndex]
-	for _, row := range sheet.Rows {
+	for rownum, row := range sheet.Rows {
 		var vals []string
-		if row != nil {
+		if row != nil && rownum >= *skipheader {
 			for _, cell := range row.Cells {
 				str, err := cell.String()
 				if err != nil {
@@ -47,7 +48,7 @@ func generateCSVFromXLSXFile(excelFileName string, sheetIndex int, outputf outpu
 
 func main() {
 	flag.Parse()
-	if len(os.Args) < 3 {
+	if len(os.Args) < 4 {
 		flag.PrintDefaults()
 		return
 	}
