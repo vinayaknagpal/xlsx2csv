@@ -34,7 +34,10 @@ func generateCSVFromXLSXFile(excelFileName string, sheetIndex int, outputf outpu
 		var vals []string
 		if row != nil && rownum >= *skipheader {
 			for _, cell := range row.Cells {
-				str := cell.Value
+				str, err := cell.String()
+				if err != nil {
+					vals = append(vals, "\"\"")
+				}
 				vals = append(vals, fmt.Sprintf("%q", str))
 			}
 			//Skip empty rows
