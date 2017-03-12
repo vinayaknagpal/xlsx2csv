@@ -34,13 +34,19 @@ func generateCSVFromXLSXFile(excelFileName string, sheetIndex int, outputf outpu
 		var vals []string
 		if row != nil && rownum >= *skipheader {
 			for _, cell := range row.Cells {
-				str, err := cell.String()
-				if err != nil {
-					//					vals = append(vals, err.Error())
-				}
+				str := cell.Value
 				vals = append(vals, fmt.Sprintf("%q", str))
 			}
-			outputf(strings.Join(vals, *delimiter) + "\n")
+			//Skip empty rows
+			allempty := true
+			for col := range vals {
+				if vals[col] != "\"\"" {
+					allempty = false
+				}
+			}
+			if allempty == false {
+				outputf(strings.Join(vals, *delimiter) + "\n")
+			}
 		}
 	}
 	return nil
